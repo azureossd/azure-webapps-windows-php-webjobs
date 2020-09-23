@@ -1,12 +1,7 @@
----
-services: storage
-platforms: php
-author: roygara
----
 
-# Transfer objects to and from Azure Blob storage using PHP
+# Azure PHP Web Jobs with Storage SDK
 
-This repository contains a simple sample project to help you getting started with Azure storage using .NET as the development language.
+This repository contains a simple sample project to help you getting started with Azure storage using PHP as the development language. This code sample was taken from https://github.com/Azure-Samples/storage-blobs-php-quickstart and adapted to work with Azure Web Jobs.
 
 ## Prerequisites
 
@@ -36,29 +31,49 @@ First, create a new general-purpose storage account to use for this quickstart.
 6. Select the **Location** to use for your storage account.
 7. Check **Pin to dashboard** and click **Create** to create your storage account. 
 
-After your storage account is created, it is pinned to the dashboard. Click on it to open it. Under **Settings**, click **Access keys**. Select the primary key and copy the associated **Connection string** to the clipboard, then paste it into a text editor for later use.
+After your storage account is created, it is pinned to the dashboard. Click on it to open it. Under **Settings**, click **Access keys**. Select **key1** to the clipboard followed by the storage account name, then paste it into a text editor for the next step.
 
-## Put the connection string in an environment variable
+## Configure your storage connection string
 
-This solution requires a connection string be stored in an environment variable securely on the machine running the sample. Follow one of the examples below depending on your Operating System to create the environment variable. If using windows close out of your open IDE or shell and restart it to be able to read the environment variable.
+In the application, you must provide your storage account name and account key to create the BlobRestProxy instance for your application. It is recommended to store these identifiers within an environment variable on the local machine running the application. Use one of the following examples depending on your Operating System to create the environment variable. Replace the youraccountname and youraccountkey values with your account name and key.
 
 ### Linux
 
 ```bash
-export storageconnectionstring="<yourconnectionstring>"
+export ACCOUNT_NAME=<youraccountname>
+export ACCOUNT_KEY=<youraccountkey>
 ```
 ### Windows
 
-```cmd
-setx storageconnectionstring "<yourconnectionstring>"
+```bash
+set ACCOUNT_NAME=<youraccountname>
+set ACCOUNT_KEY=<youraccountkey>
 ```
 
-At this point, you can run this application. It creates its own file to upload and download, and then cleans up after itself by deleting everything at the end.
+## Create and configure WebJob
 
-## More information
+1. Go to WebJobs section in your web app in portal.
+2. Generate a .zip file with all the content of this folder.
+3. Uploading and select Triggered Type.
+4. Select Triggers -> Manual
+5. Go to Application settings and add the following two environment variables
 
-The [Azure storage documentation](https://docs.microsoft.com/azure/storage/) includes a rich set of tutorials and conceptual articles, which serve as a good complement to the samples.
+```bash
+    ACCOUNT_NAME=<youraccountname>
+    ACCOUNT_KEY=<youraccountkey>
+```
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+## Install libraries using KUDU site
+1. Navigate through `D:\home\site\wwwroot\App_Data\jobs\triggered\<WebJobName>`
+2. Review if your files are there and then run `php composer.phar install`
+3. Start the webjob from Azure Portal and check status on `https://<sitename>.scm.azurewebsites.net/azurejobs/#/jobs`
+
+## Implement delete operation
+This sample will create randome container names and upload the content of HelloWorld.txt, you can uncomment these lines in index.php and this will delete the containers.
+
+```php
+        //Delete container.
+        //echo "Deleting Container". $containerName;
+        //echo "<br />"
+        //$blobClient->deleteContainer($containerName);
+```
