@@ -50,6 +50,11 @@ set ACCOUNT_NAME=<youraccountname>
 set ACCOUNT_KEY=<youraccountkey>
 ```
 
+## Run this sample locally
+
+1. Execute `php composer.phar install` to install all libraries defined in composer.json
+2. Run the sample with `php -S localhost:8080` and then browse to `http://localhost:8080`
+
 ## Create and configure WebJob
 
 1. Go to WebJobs section in your web app in portal.
